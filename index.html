@@ -59,8 +59,50 @@ const attempts=(data.papiSync||[]).filter(x=>x.kind==='odds');return `<div class
 <strong>來源：OddsPapi ／各賽事莊家賠率</strong> · 上次嘗試同步：${esc(dated(last))}（台灣時間） · 開啟網站不重新查 API。
 <div class="downtext">今日 API 請求 ${quota.day_count??0} 次、當月 ${quota.month_count??0} 次（含探索與查詢）。每日 08:00 同步；部分賽事可能無賠率、未開盤或未完成結算。</div>
 </div>`}
-function fixtureMarket(e,m){const options=m.selections||[];return `<div class="market-title">${esc(m.label||marketLabels[m.key]||m.key)}</div><div class="market-odds">${options.map(o=>{const chosen=slip.some(x=>x.eventId===e.id && x.market===m.key && x.choice===o.key&&x.point===o.point);let short=o.key==='draw'?'和局':o.key==='over'?'大':o.key==='under'?'小':o.key==='home'?e.home:e.away;
-return `<button class="odd ${chosen?'selected':''}" data-action="pick" data-id="${esc(e.id)}" data-market="${esc(m.key)}" data-choice="${esc(o.key)}" data-point="${o.point??''}" ${allowBet(e)?'':'disabled'}><span class="odd-label" title="${esc(short)}">${esc(short)}</span><b>${num(o.price)}</b>${o.point!=null?`<span class="faded">${o.point>0?'+':''}${o.point}</span>`:''}</button>`}).join('')}</div>`}
+
+function fixtureMarket(e, m) {
+  let options = [...(m.selections || [])];
+
+  // 讓隊伍型市場的順序固定和上方標題一致：away -> home
+  const hasSideOptions = options.some(o => o.key === 'home' || o.key === 'away');
+  if (hasSideOptions) {
+    const rank = { away: 0, draw: 1, home: 2 };
+    options.sort((a, b) => (rank[a.key] ?? 99) - (rank[b.key] ?? 99));
+  }
+
+  return `<div class="market-title">${esc(m.label || marketLabels[m.key] || m.key)}</div>
+    <div class="market-odds">
+      ${options.map(o => {
+        const chosen = slip.some(x =>
+          x.eventId === e.id &&
+          x.market === m.key &&
+          x.choice === o.key &&
+          x.point === o.point
+        );
+
+        let short =
+          o.key === 'draw' ? '和局' :
+          o.key === 'over' ? '大' :
+          o.key === 'under' ? '小' :
+          o.key === 'home' ? e.home :
+          o.key === 'away' ? e.away :
+          o.key;
+
+        return `<button class="odd ${chosen ? 'selected' : ''}"
+          data-action="pick"
+          data-id="${esc(e.id)}"
+          data-market="${esc(m.key)}"
+          data-choice="${esc(o.key)}"
+          data-point="${o.point ?? ''}"
+          ${allowBet(e) ? '' : 'disabled'}>
+          <span class="odd-label" title="${esc(short)}">${esc(short)}</span>
+          <b>${num(o.price)}</b>
+          ${o.point != null ? `<span class="faded">${o.point > 0 ? '+' : ''}${o.point}</span>` : ''}
+        </button>`;
+      }).join('')}
+    </div>`;
+}
+
 function allowBet(e){return e.status==='upcoming' && Date.parse(e.starts_at)>Date.now() && Date.now()-Date.parse(e.odds_updated_at)<36*3600000}
 function fixtures(){let rows=(data.fixtures||[]).filter(e=>e.status==='upcoming'&&Date.parse(e.starts_at)>Date.now()).sort((a,b)=>Date.parse(a.starts_at)-Date.parse(b.starts_at));const sports=['全部','NBA','MLB','LOL','羽球'];const day=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());const until=Date.parse(day+'T00:00:00+08:00')+windowDays*86400000;rows=rows.filter(e=>Date.parse(e.starts_at)<until);if(category!=='全部')rows=rows.filter(e=>e.sport===category);return `<div class="section-head"><div><h2>真實賽事快取</h2><p>賽程與真實莊家賠率由 OddsPapi 後端每日更新；本站僅作虛擬模擬。</p></div></div><div class="filters">${[1,3,7,14].map(d=>`<button class="chip ${windowDays===d?'active':''}" data-action="days" data-days="${d}">${d===1?'今日':`${d} 天`}</button>`).join('')}</div><div class="filters">${sports.map(s=>`<button class="chip ${s===category?'active':''}" data-action="filter" data-sport="${s}">${s}</button>`).join('')}</div>${rows.length?rows.slice(0,70).map(e=>`<article class="fixture"><div class="meta"><span>${esc(e.sport)}</span><span>· ${esc(e.league)}</span><span>· ${esc(dated(e.starts_at))}</span><span class="tag external">${esc(e.provider_bookmaker||'OddsPapi')} 快取</span></div><div class="fixture-title"><span>${esc(e.away)}</span><span class="versus">VS</span><span>${esc(e.home)}</span></div><div class="fixture-markets">${e.markets.map(m=>fixtureMarket(e,m)).join('')}</div><div class="fixture-foot"><span>賠率擷取 ${esc(datetime(e.odds_updated_at))} · ${allowBet(e)?'開賽前可模擬':'暫停模擬投注'}</span></div></article>`).join(''):'<div class="empty"><span class="big">◷</span>目前沒有可顯示的 OddsPapi 快取賽事。<div>首次部署後可到「資料與同步」執行一次同步；若賽季休賽或無報價也可能為空。</div></div>'}`}
 function lookupPick(p){const e=data.fixtures.find(x=>x.id===p.eventId);const m=e?.markets.find(x=>x.key===p.market);const s=m?.selections.find(x=>x.key===p.choice&&x.point===p.point);return {e,m,s}}
