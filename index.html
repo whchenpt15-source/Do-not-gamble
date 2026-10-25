@@ -1,45 +1,20 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#142a42"><title>留在場外 V1.8.5 | 真實賽事・虛擬紀錄</title>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#142a42"><title>留在場外 V1.8.6 | 真實賽事・虛擬紀錄</title>
 <style>
 :root{--bg:#f4f7fa;--card:#fff;--ink:#183047;--muted:#6e7e90;--line:#e4eaf1;--deep:#142a42;--blue:#265b7b;--accent:#238b83;--accent-light:#e8f7f4;--danger:#b85854;--redlight:#fff3f1;--gold:#b98c44;--shadow:0 9px 30px rgba(15,32,50,.05);--r:18px}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;font-size:14px;line-height:1.58}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.46}a{color:#217c7a;text-decoration:none}a:hover{text-decoration:underline}h1,h2,h3,p{margin:0}h1{letter-spacing:-.03em}h2{font-size:21px;letter-spacing:-.025em}h3{font-size:16px}small{color:var(--muted)}.hidden{display:none!important}
 .shell{display:grid;grid-template-columns:242px minmax(0,1fr);min-height:100vh}.sidebar{background:var(--deep);color:#d8e7ed;padding:25px 17px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column}.brand{display:flex;gap:12px;align-items:center;padding:6px 8px 25px;border-bottom:1px solid #ffffff21}.brandmark{background:#2b998e;width:41px;height:41px;border-radius:13px;color:white;display:grid;place-items:center;font-size:22px}.brand strong{font-size:20px;color:#fff;display:block;letter-spacing:.02em}.brand span{color:#a5bac6;font-size:11px;letter-spacing:1.1px}.nav{padding-top:24px;display:grid;gap:7px}.nav button{border:0;background:transparent;color:#b6c8d2;text-align:left;padding:13px 14px;border-radius:11px;display:flex;align-items:center;gap:12px;white-space:nowrap}.nav button:hover,.nav button.active{background:#ffffff16;color:#fff}.nav .ico{width:21px;text-align:center;font-size:17px}.sidefoot{margin-top:auto;padding:16px 10px;font-size:12px;line-height:1.8;color:#a1b8c4;border-top:1px solid #ffffff22}.sidefoot strong{color:#e1faf3}.main{min-width:0;padding:27px clamp(17px,3.3vw,51px) 70px;max-width:1660px;width:100%;margin:0 auto}.topline{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:25px}.breadcrumb{font-size:13px;color:var(--muted)}.topnote{display:flex;align-items:center;gap:7px;color:#377b73;font-size:12px;background:var(--accent-light);border:1px solid #d5ebe5;padding:7px 12px;border-radius:999px;white-space:nowrap}.dot{display:inline-block;width:7px;height:7px;background:#2b9b85;border-radius:50%}.hero{background:linear-gradient(110deg,#18334b,#1f4357 72%,#236b69);padding:29px 32px;border-radius:22px;color:white;display:flex;justify-content:space-between;align-items:center;gap:22px;overflow:hidden;position:relative}.hero:after{content:"";width:290px;height:290px;border:1px solid #ffffff21;border-radius:50%;position:absolute;right:-70px;top:-128px;box-shadow:0 0 0 48px #ffffff06,0 0 0 100px #ffffff04;pointer-events:none}.eyebrow{color:#97c6ca;font-size:12px;letter-spacing:.16em;font-weight:750}.hero h1{font-size:clamp(25px,2.75vw,37px);line-height:1.28;margin:10px 0}.hero p{color:#c2d3df;max-width:590px;font-size:13px}.hero-action{border:1px solid #ffffff5b;background:#ffffff15;border-radius:10px;color:#fff;padding:11px 16px;white-space:nowrap;z-index:1}.hero-action:hover{background:#ffffff28}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0 28px}.stat{background:var(--card);border:1px solid var(--line);padding:21px;border-radius:var(--r);box-shadow:var(--shadow)}.statlabel{display:flex;align-items:center;justify-content:space-between;gap:5px;font-size:12px;color:var(--muted);margin-bottom:10px}.stat .num{font-size:clamp(19px,2.4vw,29px);font-weight:780;letter-spacing:-.05em;white-space:nowrap}.stat .num small{font-size:12px;font-weight:400}.subline{font-size:11px;color:var(--muted);margin-top:5px}.negative{color:var(--danger)!important}.positive{color:#1c8d75!important}
-.section-head{display:flex;align-items:end;justify-content:space-between;gap:15px;margin-bottom:15px}.section-head p{font-size:12px;color:var(--muted);margin-top:4px}.btn{border:1px solid #d5e1e7;background:white;color:var(--ink);padding:9px 14px;border-radius:10px;font-weight:600;white-space:nowrap}.btn:hover{background:#f4f8fa}.btn-primary{background:var(--accent);border-color:var(--accent);color:white}.btn-primary:hover{background:#157b73}.btn-danger{color:var(--danger);border-color:#efcfcb}.btn-mini{padding:6px 10px;font-size:12px}.btn-quiet{background:#edf4f6;border-color:transparent;color:#3a6c79}.pagegrid{display:grid;grid-template-columns:minmax(0,1fr) 325px;align-items:start;gap:20px}.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}.panel-padding{padding:20px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:17px 20px;border-bottom:1px solid var(--line)}.panel-head strong{font-size:16px}.panel-head small{font-size:11px}.filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 15px}.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;color:#647687;font-size:12px}.chip.active{border-color:#a7d7ce;background:#eaf7f3;color:#17796f;font-weight:700}.fixture{border:1px solid var(--line);border-radius:14px;background:white;margin:0 0 13px;padding:17px;transition:border-color .15s}.fixture:hover{border-color:#b6d3d6}.fixture .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:#748899;font-size:11px;margin-bottom:11px}.tag{font-size:10px;font-weight:700;background:#f3f5f8;color:#687989;border-radius:6px;padding:3px 7px}.tag.manual{color:#385e81;background:#eaf1f9}.tag.external{color:#8a6843;background:#fff5e6}.tag.done{background:#f1f3f4;color:#5a6d75}.fixture-title{font-weight:750;font-size:17px;display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:14px}.fixture-title .versus{font-size:11px;color:#9babb8;font-weight:500}.fixture-odds{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.fixture-odds.two{grid-template-columns:repeat(2,minmax(0,1fr))}.odd{border:1px solid #e0e7ed;background:#f8fafb;border-radius:10px;padding:10px 7px;text-align:center;min-width:0;color:#365064}.odd b{display:block;font-size:17px;color:#243e56;margin-top:2px;font-variant-numeric:tabular-nums}.odd .odd-label{display:block;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.odd.selected{background:#e3f6f1;border-color:#53afa2}.odd.selected b,.odd.selected .odd-label{color:#126f65}.fixture-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:11px;color:#8a99a5;margin-top:11px}.empty{padding:42px 15px;text-align:center;color:var(--muted)}.empty .big{font-size:35px;display:block;margin-bottom:10px}.slip{position:sticky;top:22px}.slip-tabs{display:flex;background:#eff3f5;border-radius:9px;padding:4px;margin:17px 20px}.slip-tabs button{width:50%;padding:8px;border:0;border-radius:7px;background:transparent;color:#718191}.slip-tabs button.active{background:#fff;color:#203b4e;box-shadow:0 2px 6px #0001;font-weight:700}.pick{padding:13px 0;border-bottom:1px solid #edf0f4}.pick small{display:block;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pick-main{display:flex;justify-content:space-between;gap:8px;font-size:13px;margin:4px 0}.remove{background:transparent;color:#a36d67;border:0;font-size:16px;line-height:1}.stake-input{border:1px solid #dce5eb;border-radius:10px;padding:12px;font-size:17px;width:100%;outline:none}.stake-input:focus,input:focus,select:focus,textarea:focus{border-color:#69b4aa!important;outline:2px solid #e0f5f1;outline-offset:0}.stake-row{display:flex;justify-content:space-between;margin:10px 0;color:#6b7f90;font-size:12px}.slip-note{padding:10px;background:#f2f8f7;border-radius:9px;color:#608079;font-size:11px;margin:12px 0}.bigbutton{width:100%;padding:13px 12px}.strip{display:flex;gap:10px;align-items:start;background:#fffdf7;border:1px solid #f4e9cb;border-radius:11px;padding:14px 15px;font-size:12px;color:#8c7547;margin-top:15px}.stack{display:grid;gap:14px}.tabs{display:flex;gap:9px;border-bottom:1px solid var(--line);margin:20px 0}.tabs button{padding:10px 15px;color:var(--muted);border:0;border-bottom:2px solid transparent;background:transparent}.tabs button.active{border-bottom-color:var(--accent);font-weight:700;color:var(--accent)}.ticket{padding:19px 21px;border-bottom:1px solid var(--line)}.ticket:last-child{border-bottom:0}.ticket-top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:12px}.status{font-size:11px;padding:3px 8px;border-radius:999px;background:#eef3f7;color:#537188;font-weight:700}.status.win{background:#e8f7f2;color:#21816d}.status.loss{background:#fef0ee;color:#b85a55}.status.void{background:#f3f2f0;color:#777}.ticket-status-wrap{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-
-.ticket-result-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:4px 10px;
-  border-radius:999px;
-  font-size:11px;
-  font-weight:800;
-  border:1px solid transparent
-}
-
-.ticket-result-badge.win{
-  background:#e8f7f2;
-  border-color:#bfe5db;
-  color:#21816d
-}
-
-.ticket-result-badge.loss{
-  background:#fef0ee;
-  border-color:#f2c7c2;
-  color:#b85a55
-}
-
-.ticket-result-badge.void{
-  background:#f3f2f0;
-  border-color:#e1ddd9;
-  color:#777
-}
-
-.ticket-result-icon{
-  font-size:12px;
-  font-weight:900;
-  line-height:1
-}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:15px;margin-bottom:15px}.section-head p{font-size:12px;color:var(--muted);margin-top:4px}.btn{border:1px solid #d5e1e7;background:white;color:var(--ink);padding:9px 14px;border-radius:10px;font-weight:600;white-space:nowrap}.btn:hover{background:#f4f8fa}.btn-primary{background:var(--accent);border-color:var(--accent);color:white}.btn-primary:hover{background:#157b73}.btn-danger{color:var(--danger);border-color:#efcfcb}.btn-mini{padding:6px 10px;font-size:12px}.btn-quiet{background:#edf4f6;border-color:transparent;color:#3a6c79}.pagegrid{display:grid;grid-template-columns:minmax(0,1fr) 325px;align-items:start;gap:20px}.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}.panel-padding{padding:20px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:17px 20px;border-bottom:1px solid var(--line)}.panel-head strong{font-size:16px}.panel-head small{font-size:11px}.filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 15px}.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;color:#647687;font-size:12px}.chip.active{border-color:#a7d7ce;background:#eaf7f3;color:#17796f;font-weight:700}.fixture{border:1px solid var(--line);border-radius:14px;background:white;margin:0 0 13px;padding:17px;transition:border-color .15s}.fixture:hover{border-color:#b6d3d6}.fixture .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:#748899;font-size:11px;margin-bottom:11px}.tag{font-size:10px;font-weight:700;background:#f3f5f8;color:#687989;border-radius:6px;padding:3px 7px}.tag.manual{color:#385e81;background:#eaf1f9}.tag.external{color:#8a6843;background:#fff5e6}.tag.done{background:#f1f3f4;color:#5a6d75}.fixture-title{font-weight:750;font-size:17px;display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:14px}.fixture-title .versus{font-size:11px;color:#9babb8;font-weight:500}.fixture-odds{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.fixture-odds.two{grid-template-columns:repeat(2,minmax(0,1fr))}.odd{border:1px solid #e0e7ed;background:#f8fafb;border-radius:10px;padding:10px 7px;text-align:center;min-width:0;color:#365064}.odd b{display:block;font-size:17px;color:#243e56;margin-top:2px;font-variant-numeric:tabular-nums}.odd .odd-label{display:block;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.odd.selected{background:#e3f6f1;border-color:#53afa2}.odd.selected b,.odd.selected .odd-label{color:#126f65}.fixture-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:11px;color:#8a99a5;margin-top:11px}.empty{padding:42px 15px;text-align:center;color:var(--muted)}.empty .big{font-size:35px;display:block;margin-bottom:10px}.slip{position:sticky;top:22px}.slip-tabs{display:flex;background:#eff3f5;border-radius:9px;padding:4px;margin:17px 20px}.slip-tabs button{width:50%;padding:8px;border:0;border-radius:7px;background:transparent;color:#718191}.slip-tabs button.active{background:#fff;color:#203b4e;box-shadow:0 2px 6px #0001;font-weight:700}.pick{padding:13px 0;border-bottom:1px solid #edf0f4}.pick small{display:block;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pick-main{display:flex;justify-content:space-between;gap:8px;font-size:13px;margin:4px 0}.remove{background:transparent;color:#a36d67;border:0;font-size:16px;line-height:1}.stake-input{border:1px solid #dce5eb;border-radius:10px;padding:12px;font-size:17px;width:100%;outline:none}.stake-input:focus,input:focus,select:focus,textarea:focus{border-color:#69b4aa!important;outline:2px solid #e0f5f1;outline-offset:0}.stake-row{display:flex;justify-content:space-between;margin:10px 0;color:#6b7f90;font-size:12px}.slip-note{padding:10px;background:#f2f8f7;border-radius:9px;color:#608079;font-size:11px;margin:12px 0}.bigbutton{width:100%;padding:13px 12px}.strip{display:flex;gap:10px;align-items:start;background:#fffdf7;border:1px solid #f4e9cb;border-radius:11px;padding:14px 15px;font-size:12px;color:#8c7547;margin-top:15px}.stack{display:grid;gap:14px}.tabs{display:flex;gap:9px;border-bottom:1px solid var(--line);margin:20px 0}.tabs button{padding:10px 15px;color:var(--muted);border:0;border-bottom:2px solid transparent;background:transparent}.tabs button.active{border-bottom-color:var(--accent);font-weight:700;color:var(--accent)}.ticket{padding:19px 21px;border-bottom:1px solid var(--line)}.ticket:last-child{border-bottom:0}.ticket-top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:12px}.status{font-size:11px;padding:3px 8px;border-radius:999px;background:#eef3f7;color:#537188;font-weight:700}.status.win{background:#e8f7f2;color:#21816d}.status.loss{background:#fef0ee;color:#b85a55}.status.void{background:#f3f2f0;color:#777}
+/* LEG_RESULT_V186: result of EACH prediction leg; does not imply entire ticket won. */
+.ticket-leg-row{align-items:center;gap:10px}
+.ticket-leg-left{display:flex;gap:10px;align-items:center;min-width:0;flex:1}
+.ticket-leg-label{overflow-wrap:anywhere;min-width:0}
+.ticket-leg-result{width:24px;height:24px;flex:0 0 24px;border:2px solid currentColor;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;line-height:1}
+.ticket-leg-result.win{color:#1b8469;background:#e8f7f2}
+.ticket-leg-result.loss{color:#c54b48;background:#fff0ee}
+.ticket-leg-result.pending{color:#8294a5;background:#f4f6f9;font-size:13px}
+.ticket-leg-result.void{color:#858a91;background:#f1f1f1}
+.ticket-leg-row b{white-space:nowrap}
 .ticket-legs{display:grid;gap:7px;padding:13px;background:#f8fafb;border-radius:10px;font-size:12px}.ticket-leg{display:flex;justify-content:space-between;gap:15px}.ticket-bottom{display:flex;justify-content:space-between;gap:14px;margin-top:12px;font-size:12px}.ticket-bottom strong{font-size:16px}.tablewrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}th{text-align:left;padding:14px 16px;color:#8191a1;font-weight:600;background:#f8fafb}td{padding:15px 16px;border-top:1px solid var(--line)}.date-muted{font-size:11px;color:var(--muted)}.rule-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.setting{padding:19px;border:1px solid var(--line);background:#fff;border-radius:15px}.setting h3{margin-bottom:7px}.setting p{font-size:12px;color:var(--muted);margin-bottom:15px}.setting input,.setting select,.setting textarea,.field input,.field select,.field textarea{width:100%;min-width:0;padding:11px 12px;border:1px solid #d7e1e8;border-radius:9px;background:white;color:var(--ink);margin-top:6px}.setting textarea{min-height:76px}.field{display:block;color:#5b6d7b;font-size:12px;font-weight:600}.field input,.field select{font-weight:400}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.formgrid .wide{grid-column:1/-1}.muted{color:var(--muted)}.banner{padding:15px 17px;background:#edf7f5;border:1px solid #d6ebe5;border-radius:13px;margin-bottom:18px;color:#3b7771;font-size:12px}.warn{background:#fff7ed;border-color:#f5e2bb;color:#8d7043}.footer{color:#8fa0ad;font-size:11px;margin-top:33px;line-height:1.9}.notice{background:#eaf5f4;color:#347b73;font-size:12px;padding:10px 14px;border-radius:11px}.mobile-slip{display:none}.overlay{position:fixed;inset:0;z-index:50;background:#0c1e31a9;display:grid;place-items:center;padding:14px;overflow-y:auto}.modal{background:#fff;color:var(--ink);width:min(100%,510px);border-radius:19px;box-shadow:0 20px 90px #0a1b3380;overflow:hidden;max-height:95vh;overflow-y:auto}.modalhead{display:flex;justify-content:space-between;align-items:center;padding:20px 22px;border-bottom:1px solid var(--line)}.modalbody{padding:20px 22px}.modalfoot{padding:15px 22px;display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--line)}.close{border:0;background:transparent;font-size:24px;color:#8a9ba5}.modal .formgrid{margin:14px 0}.helper{font-size:11px;color:#8c9ba4}.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);max-width:95vw;z-index:100;background:#213e50;color:#fff;border-radius:11px;padding:13px 20px;box-shadow:0 12px 40px #142c4680;font-size:13px}.help-list{display:grid;gap:10px}.help-list div{border:1px solid var(--line);border-radius:11px;padding:14px}.help-list p{font-size:12px;color:var(--muted);margin-top:5px}.accent{color:var(--accent)}.flex{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.divider{height:1px;background:var(--line);margin:17px 0}.fileinput{max-width:100%}
 @media(max-width:1120px){.shell{grid-template-columns:208px minmax(0,1fr)}.sidebar{padding:22px 11px}.main{padding:23px 22px 70px}.pagegrid{grid-template-columns:minmax(0,1fr) 295px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:820px){.shell{display:block}.sidebar{height:auto;position:sticky;top:0;z-index:10;display:block;padding:9px 12px;background:#152d43}.brand{padding:4px 6px 9px;border-bottom:0}.brandmark{width:32px;height:32px;font-size:18px}.brand strong{font-size:17px}.brand span{font-size:9px}.nav{display:flex;overflow-x:auto;gap:5px;padding:5px 0 2px;scrollbar-width:none}.nav::-webkit-scrollbar{display:none}.nav button{padding:8px 12px;font-size:12px}.nav .ico{font-size:13px;width:auto}.sidefoot{display:none}.main{padding:20px 15px 60px}.pagegrid{grid-template-columns:1fr}.slip{position:static}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{padding:24px}.hero-action{display:none}.mobile-slip{display:flex;position:fixed;z-index:12;bottom:calc(14px + env(safe-area-inset-bottom));right:15px;box-shadow:0 6px 25px #1325384a;border:0;border-radius:999px;padding:12px 17px;background:#167f75;color:white;font-weight:750}.main{padding-bottom:100px}}
@@ -109,68 +84,18 @@ function fixtures(){let rows=(data.fixtures||[]).filter(e=>e.status==='upcoming'
 function lookupPick(p){const e=data.fixtures.find(x=>x.id===p.eventId);const m=e?.markets.find(x=>x.key===p.market);const s=m?.selections.find(x=>x.key===p.choice&&x.point===p.point);return {e,m,s}}
 function slipBox(){const combined=slip.reduce((x,p)=>x*Number(p.expectedPrice),1);const valid=slipType==='single'?slip.length===1:slip.length>=2;return `<aside class="panel slip" id="slip"><div class="panel-head"><strong>模擬投注單</strong><small>${slip.length} 個選項</small></div><div class="slip-tabs"><button class="${slipType==='single'?'active':''}" data-action="type" data-type="single">單場</button><button class="${slipType==='parlay'?'active':''}" data-action="type" data-type="parlay">串關</button></div><div class="panel-padding" style="padding-top:0">${slip.length?slip.map(p=>{const {e,s,m}=lookupPick(p);return `<div class="pick"><small>${esc(e?.league)} · ${esc(e?.away)} vs ${esc(e?.home)}</small><div class="pick-main"><strong>${esc(m?.label)}：${esc(s?.name||p.choice)} ${p.point==null?'':`(${p.point})`}</strong><span>${num(p.expectedPrice)} <button class="remove" data-action="remove" data-id="${esc(p.eventId)}">×</button></span></div></div>`}).join(''):'<div class="empty">點擊賽事賠率，加入模擬單。</div>'}<label class="formfield">虛擬投入（點）<input type="number" id="stake" value="${esc(stake)}" min="1" step="1" inputmode="numeric"></label><div class="stake-row"><span>合計賠率（四捨五入）</span><strong>${slip.length?num(combined):'—'}</strong></div><div class="stake-row"><span>若全部猜中，約可回收</span><strong>${slip.length?money(Math.round(stake*100*combined)):'—'}</strong></div><div class="slip-note">模擬賠率不是即時盤口。下注成功後會保存當時賠率，並由後端自動結算。</div><button class="btn btn-primary bigbutton" data-action="confirm-open" ${!valid||paused()||isBusy?'disabled':''}>${paused()?'正在暫停模擬':'確認虛擬投入'}</button></div></aside>`}
 function lobby(){return `<section class="hero"><div><span class="eyebrow">SIMULATE, DON'T STAKE</span><h1>用真實賽事，<br>把投注留在模擬裡。</h1><p>每日快取真實賽事與報價、賽後自動計算虛擬損益。沒有真實金錢往來。</p></div><button class="hero-action" data-view="limits">設定使用界線 ↗</button></section>${stats()}${sourceLine()}<div class="pagegrid"><div>${fixtures()}</div>${slipBox()}</div>`}
-
-function ticketResultBadge(status){
-  const map = {
-    win:  { cls:'win',  icon:'◯', label:'過關' },
-    loss: { cls:'loss', icon:'✕', label:'失敗' },
-    void: { cls:'void', icon:'—', label:'退款' }
+// LEG_RESULT_V186: a ticket may be lost while other legs are still pending.
+function ticketLegBadge(result){
+  const map={
+    win:{cls:'win',symbol:'✓',label:'本關過關'},
+    loss:{cls:'loss',symbol:'×',label:'本關失敗'},
+    void:{cls:'void',symbol:'−',label:'本關作廢'},
+    pending:{cls:'pending',symbol:'·',label:'本關待確認'}
   };
-  const meta = map[status];
-  if(!meta) return '';
-  return `<span class="ticket-result-badge ${meta.cls}">
-    <span class="ticket-result-icon">${meta.icon}</span>
-    <span>${meta.label}</span>
-  </span>`;
+  const item=map[result]||map.pending;
+  return `<span class="ticket-leg-result ${item.cls}" role="img" aria-label="${item.label}" title="${item.label}">${item.symbol}</span>`;
 }
-
-function tickets(){
-  const statuses = {
-    pending:'待結果',
-    win:'已猜中',
-    loss:'未猜中',
-    void:'退款'
-  };
-
-  return `<div class="section-head">
-    <div>
-      <h2>模擬下注紀錄</h2>
-      <p>票券與賠率快照寫在雲端 D1，重新開啟網站也不會消失。</p>
-    </div>
-    <button class="btn" data-action="export">↓ 匯出備份</button>
-  </div>${
-    (data.tickets||[]).length
-      ? (data.tickets||[]).map(t=>`
-        <div class="ticket-card">
-          <div class="ticket-line">
-            <strong>${t.type==='parlay'?'串關':'單場'} · ${t.legs.length} 場</strong>
-            <div class="ticket-status-wrap">
-              ${ticketResultBadge(t.status)}
-              <span class="status ${t.status}">${statuses[t.status]||t.status}</span>
-            </div>
-          </div>
-
-          <div class="muted-small">${esc(dated(t.placed_at))} · ${esc(t.id.slice(0,8))}</div>
-
-          <div class="ticket-legs" style="margin-top:9px">
-            ${t.legs.map(l=>{
-              const e = data.fixtures.find(x=>x.id===l.fixture_id);
-              return `<div class="ticket-line">
-                <span>${esc(e ? e.away+' vs '+e.home : l.fixture_id)} · ${esc(l.selection_label)}</span>
-                <b>${num(l.odds)}</b>
-              </div>`;
-            }).join('')}
-          </div>
-
-          <div class="ticket-bottom">
-            <span>投入 ${money(t.stake_cents)} · 合計賠率 ${num(t.combined_odds)}</span>
-            <strong>${t.status==='pending' ? '等待結果' : '回收 ' + money(t.payout_cents)}</strong>
-          </div>
-        </div>
-      `).join('')
-      : '<div class="empty">目前沒有模擬下注紀錄。</div>'
-  }`;
-}
+function tickets(){const statuses={pending:'待結果',win:'已猜中',loss:'未猜中',void:'退款'};return `<div class="section-head"><div><h2>模擬下注紀錄</h2><p>票券與賠率快照寫在雲端 D1，重新開啟網站也不會消失。</p></div><button class="btn" data-action="export">↓ 匯出備份</button></div>${(data.tickets||[]).length?(data.tickets||[]).map(t=>`<div class="ticket-card"><div class="ticket-line"><strong>${t.type==='parlay'?'串關':'單場'} · ${t.legs.length} 場</strong><span class="status ${t.status}">${statuses[t.status]||t.status}</span></div><div class="muted-small">${esc(dated(t.placed_at))} · ${esc(t.id.slice(0,8))}</div><div class="ticket-legs" style="margin-top:9px">${t.legs.map(l=>{const e=data.fixtures.find(x=>x.id===l.fixture_id);return `<div class="ticket-line ticket-leg-row"><div class="ticket-leg-left">${ticketLegBadge(l.leg_result)}<span class="ticket-leg-label">${esc(e?e.away+' vs '+e.home:l.fixture_id)} · ${esc(l.selection_label)}</span></div><b>${num(l.odds)}</b></div>`}).join('')}</div><div class="ticket-bottom"><span>投入 ${money(t.stake_cents)} · 合計賠率 ${num(t.combined_odds)}</span><strong>${t.status==='pending'?'等待結果':'回收 '+money(t.payout_cents)}</strong></div></div>`).join(''):'<div class="empty">目前沒有模擬下注紀錄。</div>'}`}
 function ledger(){return `<div class="section-head"><div><h2>虛擬資金流水</h2><p>所有變動由後端記錄，不在瀏覽器端直接修改餘額。</p></div><button class="btn" data-action="export">↓ 匯出備份</button></div>${stats()}<section class="panel tablewrap"><table><thead><tr><th>時間</th><th>類別</th><th>內容</th><th>虛擬點數</th></tr></thead><tbody>${(data.ledger||[]).map(x=>`<tr><td>${esc(dated(x.at))}</td><td>${esc(({initial:'初始',stake:'投入',settle:'結算'})[x.type]||x.type)}</td><td>${esc(x.note)}</td><td class="${x.amount_cents>=0?'positive':'negative'}">${x.amount_cents>0?'+':''}${money(x.amount_cents)}</td></tr>`).join('')}</tbody></table></section>`}
 function limits(){const m=metrics();return `<div class="section-head"><div><h2>戒賭與使用界線</h2><p>所有投注都是虛擬。透過固定的限額與停用時間降低衝動操作。</p></div></div><div class="safe-info">本網站不提供現金、儲值、提款或導向下注商家的按鈕。請不要把模擬成果視為真實投注建議。</div><div class="rule-grid"><div class="setting"><h3>每日虛擬投入上限</h3><p>今日已投入 ${money(dailyUsed())}，剩餘 ${money(m.available)}。</p><form id="limit-form"><label class="formfield">每天最多（點）<input name="dailyLimit" type="number" min="1" max="100000" value="${account().daily_limit_cents/100}" required></label><button class="btn btn-primary" type="submit">更新限制</button></form></div><div class="setting"><h3>暫停模擬 24 小時</h3><p>${paused()?'正在暫停至 '+esc(dated(account().pause_until)):'有衝動想追回損失時，建議直接暫停。'}</p><button class="btn btn-danger" data-action="pause-open" ${paused()?'disabled':''}>${paused()?'暫停中':'啟動 24 小時暫停'}</button></div></div>`}
 function dataPage(){const quota=data.info?.quota||{};const syncs=data.papiSync||[];
