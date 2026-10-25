@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#142a42"><title>留在場外 V1.8.2 | 真實賽事・虛擬紀錄</title>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#142a42"><title>留在場外 V1.8.5 | 真實賽事・虛擬紀錄</title>
 <style>
 :root{--bg:#f4f7fa;--card:#fff;--ink:#183047;--muted:#6e7e90;--line:#e4eaf1;--deep:#142a42;--blue:#265b7b;--accent:#238b83;--accent-light:#e8f7f4;--danger:#b85854;--redlight:#fff3f1;--gold:#b98c44;--shadow:0 9px 30px rgba(15,32,50,.05);--r:18px}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;font-size:14px;line-height:1.58}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.46}a{color:#217c7a;text-decoration:none}a:hover{text-decoration:underline}h1,h2,h3,p{margin:0}h1{letter-spacing:-.03em}h2{font-size:21px;letter-spacing:-.025em}h3{font-size:16px}small{color:var(--muted)}.hidden{display:none!important}
@@ -59,7 +59,14 @@ const attempts=(data.papiSync||[]).filter(x=>x.kind==='odds');return `<div class
 <strong>來源：OddsPapi ／各賽事莊家賠率</strong> · 上次嘗試同步：${esc(dated(last))}（台灣時間） · 開啟網站不重新查 API。
 <div class="downtext">今日 API 請求 ${quota.day_count??0} 次、當月 ${quota.month_count??0} 次（含探索與查詢）。每日 08:00 同步；部分賽事可能無賠率、未開盤或未完成結算。</div>
 </div>`}
-function fixtureMarket(e,m){const options=m.selections||[];return `<div class="market-title">${esc(m.label||marketLabels[m.key]||m.key)}</div><div class="market-odds">${options.map(o=>{const chosen=slip.some(x=>x.eventId===e.id && x.market===m.key && x.choice===o.key&&x.point===o.point);let short=o.key==='draw'?'和局':o.key==='over'?'大':o.key==='under'?'小':o.key==='home'?e.home:e.away;
+function fixtureMarket(e,m){
+// Match the fixture title e.away VS e.home. Reorder the entire selection
+// object (not prices alone), retaining choice keys and payout association.
+const rawOptions=m.selections||[];
+const order={away:0,draw:1,home:2};
+const options=m.key==='h2h'
+  ? [...rawOptions].sort((a,b)=>(order[a.key]??3)-(order[b.key]??3))
+  : rawOptions;return `<div class="market-title">${esc(m.label||marketLabels[m.key]||m.key)}</div><div class="market-odds">${options.map(o=>{const chosen=slip.some(x=>x.eventId===e.id && x.market===m.key && x.choice===o.key&&x.point===o.point);let short=o.key==='draw'?'和局':o.key==='over'?'大':o.key==='under'?'小':o.key==='home'?e.home:e.away;
 return `<button class="odd ${chosen?'selected':''}" data-action="pick" data-id="${esc(e.id)}" data-market="${esc(m.key)}" data-choice="${esc(o.key)}" data-point="${o.point??''}" ${allowBet(e)?'':'disabled'}><span class="odd-label" title="${esc(short)}">${esc(short)}</span><b>${num(o.price)}</b>${o.point!=null?`<span class="faded">${o.point>0?'+':''}${o.point}</span>`:''}</button>`}).join('')}</div>`}
 function allowBet(e){return e.status==='upcoming' && Date.parse(e.starts_at)>Date.now() && Date.now()-Date.parse(e.odds_updated_at)<36*3600000}
 function fixtures(){let rows=(data.fixtures||[]).filter(e=>e.status==='upcoming'&&Date.parse(e.starts_at)>Date.now()).sort((a,b)=>Date.parse(a.starts_at)-Date.parse(b.starts_at));const sports=['全部','NBA','MLB','LOL','羽球'];const day=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());const until=Date.parse(day+'T00:00:00+08:00')+windowDays*86400000;rows=rows.filter(e=>Date.parse(e.starts_at)<until);if(category!=='全部')rows=rows.filter(e=>e.sport===category);return `<div class="section-head"><div><h2>真實賽事快取</h2><p>賽程與真實莊家賠率由 OddsPapi 後端每日更新；本站僅作虛擬模擬。</p></div></div><div class="filters">${[1,3,7,14].map(d=>`<button class="chip ${windowDays===d?'active':''}" data-action="days" data-days="${d}">${d===1?'今日':`${d} 天`}</button>`).join('')}</div><div class="filters">${sports.map(s=>`<button class="chip ${s===category?'active':''}" data-action="filter" data-sport="${s}">${s}</button>`).join('')}</div>${rows.length?rows.slice(0,70).map(e=>`<article class="fixture"><div class="meta"><span>${esc(e.sport)}</span><span>· ${esc(e.league)}</span><span>· ${esc(dated(e.starts_at))}</span><span class="tag external">${esc(e.provider_bookmaker||'OddsPapi')} 快取</span></div><div class="fixture-title"><span>${esc(e.away)}</span><span class="versus">VS</span><span>${esc(e.home)}</span></div><div class="fixture-markets">${e.markets.map(m=>fixtureMarket(e,m)).join('')}</div><div class="fixture-foot"><span>賠率擷取 ${esc(datetime(e.odds_updated_at))} · ${allowBet(e)?'開賽前可模擬':'暫停模擬投注'}</span></div></article>`).join(''):'<div class="empty"><span class="big">◷</span>目前沒有可顯示的 OddsPapi 快取賽事。<div>首次部署後可到「資料與同步」執行一次同步；若賽季休賽或無報價也可能為空。</div></div>'}`}
@@ -73,7 +80,7 @@ function dataPage(){const quota=data.info?.quota||{};const syncs=data.papiSync||
  const report=(()=>{try{return JSON.parse(data.info?.lastReport||'{}')}catch{return {}}})();
  const coverage=(()=>{try{return JSON.parse(data.info?.coverage||'{}')}catch{return {}}})();
  return `<div class="section-head"><div><h2>我的雲端帳戶</h2><p>此手機會自動進入你的 ID；賽事快取由所有玩家共用。</p></div></div>
- <div class="rule-grid"><div class="setting"><h3>帳戶 ID：${esc(data.memberId||account()?.display_id)}</h3><p>你自己的餘額、投注紀錄和每日限額都和朋友分開。</p><div class="safe-info">復原碼只在建立帳戶時顯示一次。目前測試模式可直接使用 ID 登入；正式營運時應恢復復原碼驗證。</div>
+ <div class="rule-grid"><div class="setting"><h3>帳戶 ID：${esc(data.memberId||account()?.display_id)}</h3><p>你自己的餘額、投注紀錄和每日限額都和朋友分開。D1 balance_cents 以百分之一點儲存；網站點數＝balance_cents / 100。</p><div class="safe-info">復原碼只在建立帳戶時顯示一次。目前測試模式可直接使用 ID 登入；正式營運時應恢復復原碼驗證。</div>
  <div class="flex-wrap"><button class="btn" data-action="export">↓ 匯出個人備份</button><button class="btn btn-danger" data-action="logout">登出此裝置</button></div></div>
  <div class="setting"><h3>賽事來源與同步</h3><p>NBA、MLB、LOL、羽球由 OddsPapi 提供可用賽事與盤口；開啟網站只讀取 D1。</p><p>賠率與結算由 Cloudflare Worker 每日 08:00（台灣時間）自動同步。一般玩家不能手動執行管理同步。</p></div></div>
  <div class="panel panel-padding" style="margin-top:16px"><h3>共用賽事 API 用量</h3><p>今日 ${esc(quota.day_count??0)} 次 · 本月 ${esc(quota.month_count??0)} 次。四種運動所有玩家共用同一份快取。</p>
