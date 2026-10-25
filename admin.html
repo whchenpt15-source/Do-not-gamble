@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer"><meta name="robots" content="noindex,nofollow">
+<title>留在場外｜賽事管理後台 V1.8.7</title>
+<style>
+:root{--navy:#142d40;--teal:#178c7b;--light:#f3f7fa;--border:#dce7ec;--ink:#21394c;--muted:#667e8d;--red:#b34c48;--green:#14785c}
+*{box-sizing:border-box}html,body{margin:0}body{font:14px/1.55 system-ui,"Microsoft JhengHei","Noto Sans TC",sans-serif;color:var(--ink);background:var(--light)}
+header{background:linear-gradient(110deg,#142d40,#22556a);color:white;padding:25px max(20px,calc((100vw - 1200px)/2));display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}header h1{font-size:24px;margin:0}header p{color:#bfd3df;margin:4px 0 0;font-size:12px}header a{color:#d4fcf1;text-decoration:none;border:1px solid #ffffff5c;border-radius:9px;padding:9px 13px}
+main{max-width:1200px;margin:26px auto;padding:0 20px 60px}.card{background:white;border:1px solid var(--border);border-radius:17px;box-shadow:0 9px 30px #1733490b;padding:22px;margin-bottom:18px}.card h2{font-size:19px;margin:0 0 5px}.sub{font-size:12px;color:var(--muted);margin:0 0 16px}.callout{background:#fff8ec;border:1px solid #f2dfb9;border-radius:11px;padding:12px 15px;margin-bottom:18px;color:#6e603e}
+label{display:grid;gap:5px;font-size:12px;font-weight:720;min-width:0}input,select{width:100%;min-height:41px;border:1px solid #cddde3;border-radius:9px;background:white;padding:8px 11px;color:var(--ink);font:inherit}input:focus,select:focus{outline:2px solid #82c5b8;outline-offset:1px}.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.fields.two{grid-template-columns:repeat(2,minmax(0,1fr))}.fieldrow{display:flex;gap:12px;align-items:end;flex-wrap:wrap}.fieldrow label{flex:1 1 230px}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}button{border:1px solid #cedde3;padding:10px 15px;border-radius:10px;background:#fff;color:var(--ink);font:inherit;font-weight:720;cursor:pointer}button:hover:not(:disabled){border-color:var(--teal)}button:disabled{opacity:.55;cursor:not-allowed}.primary{background:var(--teal);border-color:var(--teal);color:white}.danger{background:var(--red);color:white;border-color:var(--red)}.tag{display:inline-flex;font-size:11px;padding:3px 8px;border-radius:99px;background:#eef4f7;color:#496477;font-weight:750}.tag.manual{background:#e4f5ee;color:var(--green)}.tag.completed{background:#e9f6ef;color:var(--green)}.tag.void{background:#f8ebeb;color:var(--red)}.note{color:var(--muted);font-size:12px}.success{color:var(--green);font-weight:750}.failure{color:var(--red);font-weight:750}
+.toolbar{display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin-bottom:13px}.toolbar label{flex:1 1 170px}.scroll{overflow:auto;border:1px solid var(--border);border-radius:12px}table{width:100%;border-collapse:collapse;min-width:770px}th,td{text-align:left;padding:13px 11px;border-bottom:1px solid #eef2f5;vertical-align:middle}th{font-size:12px;background:#f8fafc;color:#627a86}tr:last-child td{border-bottom:0}td small{display:block;color:var(--muted)}td button{padding:6px 10px;font-size:12px;margin:2px}.board{background:#f1f7f8;border:1px solid var(--border);border-radius:11px;padding:14px;margin-bottom:14px}.board strong{font-size:16px}.scorebox{display:grid;grid-template-columns:1fr 1fr;gap:14px}.scorebox label{display:grid;grid-template-columns:1fr}.hidden{display:none!important}.message{padding:12px 15px;border-radius:10px;background:#eaf6f1;border:1px solid #bbded2;margin:12px 0;white-space:pre-wrap}.message.error{background:#fff0ee;border-color:#efc4c0;color:#983e3b}#preview{border:1px solid #d3e7df;background:#f2faf6;border-radius:12px;margin-top:14px;padding:16px}.muted{opacity:.7}.split{display:grid;grid-template-columns:1fr 1fr;gap:18px}footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+@media(max-width:760px){.fields,.fields.two,.split{grid-template-columns:1fr}.card{padding:17px}header{padding:21px 17px}.scorebox{grid-template-columns:1fr 1fr}main{padding:0 12px 40px}}
+</style>
+</head>
+<body>
+<header><div><h1>◌ 留在場外 · 管理後台</h1><p>V1.8.7｜Cloudflare Worker + D1 · 僅管理員可操作</p></div><a href="./index.html">返回模擬前台</a></header>
+<main>
+<div class="callout">本頁不儲存管理員 Token，也不會在網址附上 Token。賠率是手動設定的虛擬模擬盤口，不代表 Pinnacle 報價。<strong>正式比分確認後可能立即改變玩家票券及虛擬點數，請先核對。</strong></div>
+<section class="card" id="login-card"><h2>01 · 管理員驗證</h2><p class="sub">使用你已設定於 Cloudflare Worker Secret 的 APP_ACCESS_TOKEN；關閉或重整頁面後須重新輸入。</p><div class="fieldrow"><label>管理員 Token<input id="token" type="password" autocomplete="off" spellcheck="false" placeholder="貼上原本的管理員 Token"></label><button type="button" class="primary" id="connect">驗證並載入賽事</button><button type="button" id="disconnect" class="hidden">清除工作階段</button></div><p class="note" id="connected-text">尚未連線</p></section>
+<div id="workspace" class="hidden">
+<section class="card"><h2>02 · 新增賽事與運動分類</h2><p class="sub">運動分類可直接輸入新名稱，例如 LOL、NBA、足球、羽球。前台將自動出現對應的篩選按鈕。僅建立「全場勝負」盤；和局賠率可留白。</p>
+<form id="create-form"><div class="fields">
+<label>運動分類<input id="sport" name="sport" list="sport-options" value="LOL" maxlength="28" required><datalist id="sport-options"><option value="LOL"><option value="NBA"><option value="MLB"><option value="足球"><option value="羽球"></datalist></label>
+<label>聯賽名稱<input name="league" placeholder="例如 Worlds 2026" maxlength="80" required></label>
+<label>開賽時間（台灣 UTC+8）<input name="startsLocal" type="datetime-local" required></label>
+<label>客隊名稱（前台左側）<input name="away" placeholder="Away team" maxlength="100" required></label>
+<label>主隊名稱（前台右側）<input name="home" placeholder="Home team" maxlength="100" required></label>
+<label>和局賠率（選填）<input name="drawOdds" type="number" inputmode="decimal" min="1.01" max="1000" step="0.01" placeholder="不提供和局就留空"></label>
+<label>客隊勝出賠率<input name="awayOdds" type="number" inputmode="decimal" min="1.01" max="1000" step="0.01" value="2.10" required></label>
+<label>主隊勝出賠率<input name="homeOdds" type="number" inputmode="decimal" min="1.01" max="1000" step="0.01" value="1.75" required></label>
+</div><div class="actions"><button class="primary" type="submit">＋ 建立並上架賽事</button><span class="note">玩家已有的票券會保存當時賠率。</span></div></form>
+<div id="created" class="message hidden"></div></section>
+<section class="card"><h2>03 · 賽事管理清單</h2><p class="sub">可搜尋隊伍、聯賽與運動分類。手動建立的未開賽賽事可編輯賠率；所有尚未完成的賽事皆可核對並輸入正式比分。</p>
+<div class="toolbar"><label>顯示範圍<select id="scope"><option value="upcoming">尚未結算</option><option value="recent">最近賽事</option><option value="manual">手動建立的賽事</option></select></label><label>搜尋<input type="search" id="search" placeholder="球隊、聯賽或分類"></label><button type="button" id="refresh">重新整理／搜尋</button></div>
+<p class="note" id="list-count"></p><div class="scroll"><table><thead><tr><th>運動 / 聯賽</th><th>對戰</th><th>開賽時間（台灣）</th><th>勝負賠率</th><th>狀態</th><th>操作</th></tr></thead><tbody id="fixture-list"><tr><td colspan="6">請先輸入管理員 Token</td></tr></tbody></table></div></section>
+<div class="split">
+<section class="card hidden" id="odds-panel"><h2>04 · 修改手動賽事賠率</h2><p class="sub">僅能修改尚未開賽、手動建立的賽事；已成立的票券賠率不受影響。</p><div class="board" id="odds-title"></div><form id="odds-form"><div class="fields two"><label>客隊賠率<input name="awayOdds" type="number" step="0.01" min="1.01" max="1000" required></label><label>主隊賠率<input name="homeOdds" type="number" step="0.01" min="1.01" max="1000" required></label><label>和局賠率（選填）<input name="drawOdds" type="number" step="0.01" min="1.01" max="1000"></label></div><div class="actions"><button type="submit" class="primary">儲存新賠率</button><button type="button" id="odds-cancel">取消</button></div></form></section>
+<section class="card hidden" id="result-panel"><h2>04 · 手動輸入正式賽果</h2><p class="sub">先輸入完整比分 → 預覽每腿勝負與涉及票券 → 再按確認。若比賽尚未開賽，系統會拒絕提前結算。</p><div class="board" id="result-title"></div><form id="result-form"><div class="scorebox"><label id="away-score-label">客隊最終比分<input name="awayScore" type="number" min="0" max="999" step="1" required></label><label id="home-score-label">主隊最終比分<input name="homeScore" type="number" min="0" max="999" step="1" required></label></div><div class="actions"><button class="primary" type="submit">先預覽，不寫入 D1</button><button type="button" id="result-cancel">取消</button></div></form><div id="preview" class="hidden"><strong>確認前請核對</strong><div id="preview-text"></div><div class="actions"><button id="confirm-result" type="button" class="danger">確認比分並結算相關票券</button><button type="button" id="repreview">返回修改</button></div></div></section>
+</div>
+<section class="card"><h2>05 · 補跑已知賽果的票券結算</h2><p class="sub">若賽果已保存，但票券狀態尚未更新，可補跑既有結算機制。這會掃描全站待結算票券，不會重新查詢外部比分，也不會覆寫已完成賽事。</p><button type="button" id="retry-settlement">檢查並補跑待結算票券</button></section>
+<div id="action-message" class="message hidden" role="status"></div>
+</div>
+</main><footer>留在場外 · 私人虛擬點數模擬專案 · 不涉及真實金流</footer>
+<script>
+(()=>{'use strict';
+const BASE='https://outside-line-api.vb09612.workers.dev';
+const el=id=>document.getElementById(id);
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dateTW=s=>s?new Date(s).toLocaleString('zh-TW',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}):'—';
+const fmt=n=>n==null?'—':Number(n).toFixed(2);
+let token='',fixtures=[],selectedOdds=null,selectedResult=null,preview=null,submitting=false;
+function busy(set){submitting=set;for(const b of document.querySelectorAll('button'))b.disabled=set;}
+async function api(path,method='GET',body){
+  if(!token)throw Error('請先驗證管理員 Token');
+  const r=await fetch(BASE+path,{method,headers:{Authorization:'Bearer '+token,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined,cache:'no-store'});
+  const j=await r.json().catch(()=>({error:'API 未回傳 JSON'}));
+  if(!r.ok || j.error || j.ok===false)throw Error(j.error||j.message||`HTTP ${r.status}`);
+  return j;
+}
+function message(text,bad=false,id='action-message'){const box=el(id);box.classList.remove('hidden');box.classList.toggle('error',bad);box.textContent=text;box.scrollIntoView({block:'nearest',behavior:'smooth'});}
+function clearMessage(){el('action-message').classList.add('hidden');}
+function pickMarkets(f){const m=f.markets?.find(x=>x.key==='h2h');return {home:m?.selections?.find(x=>x.key==='home')?.price,away:m?.selections?.find(x=>x.key==='away')?.price,draw:m?.selections?.find(x=>x.key==='draw')?.price};}
+function renderList(){
+  el('list-count').textContent=`目前顯示 ${fixtures.length} 場（最多 150 場；縮小搜尋條件可找到更多）`;
+  el('fixture-list').innerHTML=fixtures.map(f=>{
+    const m=pickMarkets(f), active=f.status==='upcoming';
+    const odds=f.manual&&active&&Date.parse(f.starts_at)>Date.now()?`<button type="button" data-action="odds" data-id="${esc(f.id)}">改賠率</button>`:'';
+    const result=active?`<button type="button" data-action="result" data-id="${esc(f.id)}">輸入賽果</button>`:'';
+    return `<tr><td><strong>${esc(f.sport)}</strong><small>${esc(f.league)}</small></td>
+      <td><strong>${esc(f.away)}</strong> vs <strong>${esc(f.home)}</strong><small>${f.manual?'手動上架':'外部賽事'} · ${esc(f.id.slice(0,22))}</small></td>
+      <td>${esc(dateTW(f.starts_at))}</td>
+      <td>客 ${fmt(m.away)} / 主 ${fmt(m.home)}${m.draw==null?'':`<small>和 ${fmt(m.draw)}</small>`}</td>
+      <td><span class="tag ${esc(f.status)}">${f.status==='upcoming'?'未完成':f.status==='completed'?`已完成 ${esc(f.away_score)}–${esc(f.home_score)}`:'已作廢'}</span></td>
+      <td>${odds}${result||(!odds?'—':'')}</td></tr>`;
+  }).join('')||'<tr><td colspan="6">沒有符合條件的賽事，請嘗試「最近賽事」或搜尋隊伍。</td></tr>';
+}
+async function load(){const s=new URLSearchParams({scope:el('scope').value,search:el('search').value});const d=await api('/api/admin/fixtures?'+s.toString());fixtures=d.fixtures||[];renderList();el('sport-options').innerHTML=[...new Set(['LOL','NBA','MLB','足球','羽球',...(d.sports||[])])].map(x=>`<option value="${esc(x)}"></option>`).join('');}
+function getFixture(id){return fixtures.find(f=>f.id===id);}
+function selectOdds(f){selectedOdds=f;selectedResult=null;preview=null;el('result-panel').classList.add('hidden');el('odds-panel').classList.remove('hidden');const m=pickMarkets(f);el('odds-title').textContent=`${f.sport}｜${f.away} vs ${f.home}`;const form=el('odds-form');form.elements.awayOdds.value=m.away??'';form.elements.homeOdds.value=m.home??'';form.elements.drawOdds.value=m.draw??'';el('odds-panel').scrollIntoView({behavior:'smooth',block:'center'});}
+function selectResult(f){selectedResult=f;selectedOdds=null;preview=null;el('odds-panel').classList.add('hidden');el('result-panel').classList.remove('hidden');el('preview').classList.add('hidden');const form=el('result-form');form.reset();el('result-title').textContent=`${f.sport}｜${f.away}（客） vs ${f.home}（主）｜${dateTW(f.starts_at)}`;el('away-score-label').firstChild.textContent=`${f.away}（客）最終比分`;
+ el('home-score-label').firstChild.textContent=`${f.home}（主）最終比分`;el('result-panel').scrollIntoView({behavior:'smooth',block:'center'});}
+function resultBody(){const f=el('result-form');return {id:selectedResult?.id,awayScore:f.elements.awayScore.value,homeScore:f.elements.homeScore.value};}
+function resetPreview(){preview=null;el('preview').classList.add('hidden');}
+async function guarded(fn){if(submitting)return;busy(true);clearMessage();try{await fn();}catch(e){message('操作未完成：'+e.message,true);}finally{busy(false);}}
+el('connect').addEventListener('click',()=>guarded(async()=>{const v=el('token').value.trim();if(!v)throw Error('請貼入管理員 Token');token=v;try{await load();}catch(e){token='';throw e;}el('token').value='';el('connected-text').textContent='✓ 管理員已驗證（Token 僅保留於此分頁的記憶體）';el('disconnect').classList.remove('hidden');el('workspace').classList.remove('hidden');}));
+el('disconnect').addEventListener('click',()=>{token='';fixtures=[];selectedOdds=selectedResult=preview=null;el('workspace').classList.add('hidden');el('disconnect').classList.add('hidden');el('connected-text').textContent='已清除本頁登入資訊';el('token').value='';});
+el('refresh').addEventListener('click',()=>guarded(load));
+el('scope').addEventListener('change',()=>guarded(load));
+el('search').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();guarded(load);}});
+el('fixture-list').addEventListener('click',e=>{const b=e.target.closest('button[data-action]');if(!b)return;const f=getFixture(b.dataset.id);if(!f)return;if(b.dataset.action==='odds')selectOdds(f);if(b.dataset.action==='result')selectResult(f);});
+el('create-form').addEventListener('submit',e=>{e.preventDefault();guarded(async()=>{
+ const f=e.currentTarget,form=Object.fromEntries(new FormData(f).entries());const dt=String(form.startsLocal||'');if(!/^\d{4}-\d\d-\d\dT\d\d:\d\d$/.test(dt))throw Error('請輸入台灣時間的開賽日期');
+ const startsAt=new Date(dt+':00+08:00').toISOString();
+ const r=await api('/api/admin/fixtures','POST',{...form,startsAt});
+ message('✓ 成功建立賽事：'+r.id+'\n'+form.away+' vs '+form.home,false,'created');
+ el('scope').value='manual';el('search').value='';await load();
+});});
+el('odds-form').addEventListener('submit',e=>{e.preventDefault();guarded(async()=>{if(!selectedOdds)throw Error('請先選擇賽事');const values=Object.fromEntries(new FormData(e.currentTarget).entries());await api('/api/admin/fixtures/odds','POST',{id:selectedOdds.id,...values});message('賠率已更新。原有投注單依下注當時賠率計算。');el('odds-panel').classList.add('hidden');await load();});});
+el('result-form').addEventListener('input',resetPreview);
+el('result-form').addEventListener('submit',e=>{e.preventDefault();guarded(async()=>{if(!selectedResult)throw Error('請先選擇賽事');preview=await api('/api/admin/fixtures/result/preview','POST',resultBody());const p=preview;
+ el('preview-text').innerHTML=`<p>客隊 <strong>${esc(p.away)}：${p.awayScore}</strong> ／ 主隊 <strong>${esc(p.home)}：${p.homeScore}</strong></p>
+ <p>勝方：<strong>${esc(p.winner==='home'?p.home:p.winner==='away'?p.away:'和局')}</strong></p>
+ <p>涉及 <strong>${p.affectedTickets}</strong> 張未結算票券，共 <strong>${p.pendingLegs}</strong> 腿；預估個別關卡：<span class="success">${p.gradeCounts.win} 過關</span>、<span class="failure">${p.gradeCounts.loss} 失敗</span>、${p.gradeCounts.void} 作廢。</p>
+ <p class="note">這些是受影響關卡數，不表示整張串關都會立即結算。確認後不得直接覆寫已完成的賽事。</p>`;
+ el('preview').classList.remove('hidden');
+ });});
+el('confirm-result').addEventListener('click',()=>guarded(async()=>{
+ if(!preview||!selectedResult)throw Error('請先預覽');
+ const winner=preview.winner==='home'?preview.home:preview.winner==='away'?preview.away:'和局';
+ if(!window.confirm(`確認提交不可直接撤銷的正式賽果？\n${preview.away} ${preview.awayScore}：${preview.homeScore} ${preview.home}\n勝方：${winner}\n影響 ${preview.affectedTickets} 張待結算票券`))return;
+ const r=await api('/api/admin/fixtures/result/confirm','POST',{...resultBody(),previewHash:preview.previewHash,confirm:'CONFIRM_MANUAL_FINAL'});
+ message(`✓ 賽果已寫入 D1：${r.awayScore}：${r.homeScore}\n已標記 ${r.resultMarkedLegs} 個供應商關卡結果，本次全站已結算 ${r.settledTickets} 張票券。${r.settlementError?'\n注意：'+r.settlementError:''}\n請至前台重新整理檢查每腿圖示與點數流水。`,!!r.settlementError);
+ el('result-panel').classList.add('hidden');preview=null;await load();
+}));
+el('retry-settlement').addEventListener('click',()=>guarded(async()=>{
+ if(!window.confirm('確定掃描全站待結算票券，結算所有已具備可靠賽果的票券？'))return;
+ const r=await api('/api/admin/fixtures/settlement/retry','POST',{confirm:'RETRY_PENDING_SETTLEMENT'});
+ message(`補跑完成：本次結算 ${r.settledTickets} 張票券。`);
+}));
+el('repreview').addEventListener('click',resetPreview);
+el('odds-cancel').addEventListener('click',()=>{selectedOdds=null;el('odds-panel').classList.add('hidden');});
+el('result-cancel').addEventListener('click',()=>{selectedResult=null;resetPreview();el('result-panel').classList.add('hidden');});
+})();
+</script>
+</body></html>
