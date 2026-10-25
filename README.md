@@ -1,3 +1,9 @@
+# V1.3.4 Worlds-only 限定查詢
+
+目前後端只會同步英雄聯盟世界賽；請先閱讀專案外層 `WORLDS-ONLY-README.md`。其他運動同步暫停，舊資料保留。
+
+---
+
 # 留在場外 V1.3 — 每支手機首次建立 ID，自動登入
 
 這是一款**只使用虛擬點數的戒賭模擬帳戶**：沒有真實投注、儲值、提款、現金獎金。賽事與賠率由 OddsPapi 在 Cloudflare Workers 後端定時同步，所有人共用快取。
@@ -129,3 +135,21 @@ node --experimental-default-type=module backend/test/smoke-oddspapi.mjs
 ```
 
 測試涵蓋：兩人互不查看／修改對方票券與餘額、共用賽事資料、每個人正確扣款與入帳、避免重複結算、復原碼登入、管理員權限與舊資料保留；也測試 OddsPapi 假資料同步。**這不代表已連線你的真實 Cloudflare 帳戶、真實 OddsPapi API 或實體 iPhone Safari，部署後仍需實際驗證。**
+
+---
+
+## V1.3.1 修補：OddsPapi 市場定義過大
+
+如果 `/api/sync` 報 `D1_ERROR: string or blob too big: SQLITE_TOOBIG`，
+V1.3.1 已改為精簡／分段寫入 markets 資料，並提供管理員當日失敗重試：`POST /api/sync`，Body `{"retryFailed":true}`。
+在本包根目錄的 `HOTFIX-README.md` 查看 Windows 升級及安全重試步驟。保留既有 D1 UUID 與 Secrets，無須重建資料庫。
+
+## V1.4 Chaofan LOL settlement bridge
+
+See `V1.4-超凡電競-CMD部署說明.md` at the archive root. Chaofan public match-detail / tournament HTML can grade uniquely matched LOL h2h legs without OddsPapi settlement requests. The JS-rendered `/match/lol` page is not a verified batch-result API; insufficient source data fails closed and leaves bets pending. `CHAOFAN_PAGES` configures up to six approved public pages. `PAPI_SETTLEMENT_FALLBACK=false` prevents per-game OddsPapi settlement credits. Admin-only `/api/chaofan/preview` and `/api/chaofan/settle` support verification.
+
+## V1.4.1: operational errors and account recovery
+See `V1.4.1-CMD-排查與修復.md`. This release does not change the D1 schema. It adds protected `/api/admin/diagnostics`, protected `/api/admin/members/reset-recovery` (explicit `ADMIN_RECOVERY_RESET_ENABLED=true` temporary opt-in, one-time recovery code reset with session revocation), and an HTTP 5xx stop condition for explicit provider settlement fallback. Keep `PAPI_SETTLEMENT_FALLBACK = "false"` for Chaofan-first operation. Historical `last-report` errors are not live worker errors.
+
+## V1.4.2 update
+See `V1.4.2-超凡專用結算-CMD說明.md`. OddsPapi result/settlement API disabled at code level; Chaofan provides only verified LoL series-winner results. Provider config fallback flag is ignored. Data source page availability remains unverified for date-wide batch results.

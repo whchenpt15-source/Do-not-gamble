@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#142a42"><title>留在場外 V1.3 | 真實賽事・虛擬紀錄</title>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#142a42"><title>留在場外 V1.8.2 | 真實賽事・虛擬紀錄</title>
 <style>
 :root{--bg:#f4f7fa;--card:#fff;--ink:#183047;--muted:#6e7e90;--line:#e4eaf1;--deep:#142a42;--blue:#265b7b;--accent:#238b83;--accent-light:#e8f7f4;--danger:#b85854;--redlight:#fff3f1;--gold:#b98c44;--shadow:0 9px 30px rgba(15,32,50,.05);--r:18px}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;font-size:14px;line-height:1.58}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.46}a{color:#217c7a;text-decoration:none}a:hover{text-decoration:underline}h1,h2,h3,p{margin:0}h1{letter-spacing:-.03em}h2{font-size:21px;letter-spacing:-.025em}h3{font-size:16px}small{color:var(--muted)}.hidden{display:none!important}
@@ -23,7 +23,7 @@
 (()=>{'use strict';
 const STORE='outside-line-member-v13';
 // 部署者只需修改這一行：填入公開的 Worker 網址，不得放入任何私人金鑰。
-const API_BASE_URL='https://outside-line-api.vb09612.workers.dev';
+const API_BASE_URL='https://YOUR_WORKER_SUBDOMAIN.workers.dev';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=n=>Number(n||0).toLocaleString('zh-TW',{minimumFractionDigits:0,maximumFractionDigits:2});
@@ -39,7 +39,7 @@ function validateUrl(src){const url=new URL(src);if(url.protocol!=='https:'&&url
 async function api(path,method='GET',body=null,guest=false){
  const base=validateUrl(API_BASE_URL);
  const token=!guest?creds?.token:null;
- if(!guest&&!token)throw Error('請先建立 ID 或使用復原碼登入');
+ if(!guest&&!token)throw Error('請先建立 ID 或登入');
  const response=await fetch(base+path,{method,mode:'cors',cache:'no-store',headers:{...(token?{'authorization':'Bearer '+token}:{}),...(body?{'content-type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});
  let payload;try{payload=await response.json()}catch{throw Error('後端沒有回傳有效 JSON，請確認 Worker 已部署')}
  if(!response.ok)throw Error(payload.error||'後端錯誤 '+response.status);
@@ -59,50 +59,8 @@ const attempts=(data.papiSync||[]).filter(x=>x.kind==='odds');return `<div class
 <strong>來源：OddsPapi ／各賽事莊家賠率</strong> · 上次嘗試同步：${esc(dated(last))}（台灣時間） · 開啟網站不重新查 API。
 <div class="downtext">今日 API 請求 ${quota.day_count??0} 次、當月 ${quota.month_count??0} 次（含探索與查詢）。每日 08:00 同步；部分賽事可能無賠率、未開盤或未完成結算。</div>
 </div>`}
-
-function fixtureMarket(e, m) {
-  let options = [...(m.selections || [])];
-
-  // 讓隊伍型市場的順序固定和上方標題一致：away -> home
-  const hasSideOptions = options.some(o => o.key === 'home' || o.key === 'away');
-  if (hasSideOptions) {
-    const rank = { away: 0, draw: 1, home: 2 };
-    options.sort((a, b) => (rank[a.key] ?? 99) - (rank[b.key] ?? 99));
-  }
-
-  return `<div class="market-title">${esc(m.label || marketLabels[m.key] || m.key)}</div>
-    <div class="market-odds">
-      ${options.map(o => {
-        const chosen = slip.some(x =>
-          x.eventId === e.id &&
-          x.market === m.key &&
-          x.choice === o.key &&
-          x.point === o.point
-        );
-
-        let short =
-          o.key === 'draw' ? '和局' :
-          o.key === 'over' ? '大' :
-          o.key === 'under' ? '小' :
-          o.key === 'home' ? e.home :
-          o.key === 'away' ? e.away :
-          o.key;
-
-        return `<button class="odd ${chosen ? 'selected' : ''}"
-          data-action="pick"
-          data-id="${esc(e.id)}"
-          data-market="${esc(m.key)}"
-          data-choice="${esc(o.key)}"
-          data-point="${o.point ?? ''}"
-          ${allowBet(e) ? '' : 'disabled'}>
-          <span class="odd-label" title="${esc(short)}">${esc(short)}</span>
-          <b>${num(o.price)}</b>
-          ${o.point != null ? `<span class="faded">${o.point > 0 ? '+' : ''}${o.point}</span>` : ''}
-        </button>`;
-      }).join('')}
-    </div>`;
-}
-
+function fixtureMarket(e,m){const options=m.selections||[];return `<div class="market-title">${esc(m.label||marketLabels[m.key]||m.key)}</div><div class="market-odds">${options.map(o=>{const chosen=slip.some(x=>x.eventId===e.id && x.market===m.key && x.choice===o.key&&x.point===o.point);let short=o.key==='draw'?'和局':o.key==='over'?'大':o.key==='under'?'小':o.key==='home'?e.home:e.away;
+return `<button class="odd ${chosen?'selected':''}" data-action="pick" data-id="${esc(e.id)}" data-market="${esc(m.key)}" data-choice="${esc(o.key)}" data-point="${o.point??''}" ${allowBet(e)?'':'disabled'}><span class="odd-label" title="${esc(short)}">${esc(short)}</span><b>${num(o.price)}</b>${o.point!=null?`<span class="faded">${o.point>0?'+':''}${o.point}</span>`:''}</button>`}).join('')}</div>`}
 function allowBet(e){return e.status==='upcoming' && Date.parse(e.starts_at)>Date.now() && Date.now()-Date.parse(e.odds_updated_at)<36*3600000}
 function fixtures(){let rows=(data.fixtures||[]).filter(e=>e.status==='upcoming'&&Date.parse(e.starts_at)>Date.now()).sort((a,b)=>Date.parse(a.starts_at)-Date.parse(b.starts_at));const sports=['全部','NBA','MLB','LOL','羽球'];const day=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());const until=Date.parse(day+'T00:00:00+08:00')+windowDays*86400000;rows=rows.filter(e=>Date.parse(e.starts_at)<until);if(category!=='全部')rows=rows.filter(e=>e.sport===category);return `<div class="section-head"><div><h2>真實賽事快取</h2><p>賽程與真實莊家賠率由 OddsPapi 後端每日更新；本站僅作虛擬模擬。</p></div></div><div class="filters">${[1,3,7,14].map(d=>`<button class="chip ${windowDays===d?'active':''}" data-action="days" data-days="${d}">${d===1?'今日':`${d} 天`}</button>`).join('')}</div><div class="filters">${sports.map(s=>`<button class="chip ${s===category?'active':''}" data-action="filter" data-sport="${s}">${s}</button>`).join('')}</div>${rows.length?rows.slice(0,70).map(e=>`<article class="fixture"><div class="meta"><span>${esc(e.sport)}</span><span>· ${esc(e.league)}</span><span>· ${esc(dated(e.starts_at))}</span><span class="tag external">${esc(e.provider_bookmaker||'OddsPapi')} 快取</span></div><div class="fixture-title"><span>${esc(e.away)}</span><span class="versus">VS</span><span>${esc(e.home)}</span></div><div class="fixture-markets">${e.markets.map(m=>fixtureMarket(e,m)).join('')}</div><div class="fixture-foot"><span>賠率擷取 ${esc(datetime(e.odds_updated_at))} · ${allowBet(e)?'開賽前可模擬':'暫停模擬投注'}</span></div></article>`).join(''):'<div class="empty"><span class="big">◷</span>目前沒有可顯示的 OddsPapi 快取賽事。<div>首次部署後可到「資料與同步」執行一次同步；若賽季休賽或無報價也可能為空。</div></div>'}`}
 function lookupPick(p){const e=data.fixtures.find(x=>x.id===p.eventId);const m=e?.markets.find(x=>x.key===p.market);const s=m?.selections.find(x=>x.key===p.choice&&x.point===p.point);return {e,m,s}}
@@ -115,7 +73,7 @@ function dataPage(){const quota=data.info?.quota||{};const syncs=data.papiSync||
  const report=(()=>{try{return JSON.parse(data.info?.lastReport||'{}')}catch{return {}}})();
  const coverage=(()=>{try{return JSON.parse(data.info?.coverage||'{}')}catch{return {}}})();
  return `<div class="section-head"><div><h2>我的雲端帳戶</h2><p>此手機會自動進入你的 ID；賽事快取由所有玩家共用。</p></div></div>
- <div class="rule-grid"><div class="setting"><h3>帳戶 ID：${esc(data.memberId||account()?.display_id)}</h3><p>你自己的餘額、投注紀錄和每日限額都和朋友分開。</p><div class="safe-info">復原碼只在建立帳戶時顯示一次。換手機或清除瀏覽器資料後，請使用「ID＋復原碼」找回帳戶。</div>
+ <div class="rule-grid"><div class="setting"><h3>帳戶 ID：${esc(data.memberId||account()?.display_id)}</h3><p>你自己的餘額、投注紀錄和每日限額都和朋友分開。</p><div class="safe-info">復原碼只在建立帳戶時顯示一次。目前測試模式可直接使用 ID 登入；正式營運時應恢復復原碼驗證。</div>
  <div class="flex-wrap"><button class="btn" data-action="export">↓ 匯出個人備份</button><button class="btn btn-danger" data-action="logout">登出此裝置</button></div></div>
  <div class="setting"><h3>賽事來源與同步</h3><p>NBA、MLB、LOL、羽球由 OddsPapi 提供可用賽事與盤口；開啟網站只讀取 D1。</p><p>賠率與結算由 Cloudflare Worker 每日 08:00（台灣時間）自動同步。一般玩家不能手動執行管理同步。</p></div></div>
  <div class="panel panel-padding" style="margin-top:16px"><h3>共用賽事 API 用量</h3><p>今日 ${esc(quota.day_count??0)} 次 · 本月 ${esc(quota.month_count??0)} 次。四種運動所有玩家共用同一份快取。</p>
@@ -128,8 +86,12 @@ function intro(){const err=message?`<div class="safe-info" role="alert">${esc(me
  <div class="config-card"><h2>建立個人帳戶</h2><p>預設初始虛擬資金 10,000 點，每日投入上限 500 點。</p>${err}
  ${invalid?'<div class="safe-info">網站管理者尚未設定 Worker 網址，請先完成 README 的部署步驟。</div>':''}
  <form id="register-form"><label class="formfield">設定你的 ID（3～24 位英數字）<input name="id" required minlength="3" maxlength="24" placeholder="例如 player001" autocomplete="username"></label><button class="btn-main" type="submit" ${invalid?'disabled':''}>建立我的模擬帳戶</button></form>
+ <div class="safe-info">測試模式：僅需 ID 即可登入既有帳戶，知道 ID 的任何人都能存取該帳戶。請勿長期公開使用。</div>
+ <form id="id-login-form"><label class="formfield">已經有 ID？輸入 ID 登入<input name="id" required minlength="3" maxlength="24" autocomplete="username" placeholder="原有帳戶 ID"></label><button type="submit" class="btn-main" ${invalid?'disabled':''}>使用 ID 登入</button></form>
+ <!-- 暫時隱藏原本的 ID＋復原碼表單，後端 /api/auth/recover 仍保留。 --><!--
  <details style="margin-top:22px"><summary style="cursor:pointer;font-weight:650">已經有 ID？換手機／重新登入</summary><form id="recover-form"><label class="formfield">原本的 ID<input name="id" required minlength="3" maxlength="24" autocomplete="username"></label><label class="formfield">建立帳戶時保存的復原碼<input name="recoveryCode" required autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="64 位英數復原碼"></label><button type="submit" class="btn-main" ${invalid?'disabled':''}>找回原帳戶</button></form></details>
- <div class="downtext">ID 不是密碼：新帳戶會產生高強度裝置登入憑證。請保存一次性復原碼，避免清除網站資料後無法找回。</div></div></div>`}
+ -->
+ <div class="downtext">測試期間可以使用 ID 登入；恢復正常驗證後，仍需復原碼。新帳戶建立時請繼續保存復原碼。</div></div></div>`}
 function render(){const nav=$('#breadcrumb'),app=$('#app');nav.textContent='首頁 / '+labels[view];document.querySelectorAll('[data-view]').forEach(el=>el.classList.toggle('active',el.dataset.view===view));$('#mobileSlip').classList.toggle('hidden',view!=='lobby'||!slip.length||!data?.account);$('#slipCount').textContent=slip.length;
  if(!creds){app.innerHTML=intro();return}if(!data){app.innerHTML=message?intro():`<div class="loader">正在讀取雲端資料…</div>`;return}if(!account()){app.innerHTML=intro();return}
  app.innerHTML=({lobby,tickets,ledger,limits,data:dataPage}[view]||lobby)();$('#modalRoot').innerHTML=modal||'';
@@ -147,6 +109,14 @@ async function register(form){
  `<button class="btn" data-action="copy-recovery">複製復原碼</button><button class="btn btn-primary" data-action="close-modal">我已保存</button>`);
  render();
 }
+async function loginById(form){
+ const fd=new FormData(form);
+ const result=await api('/api/auth/id-login','POST',{id:String(fd.get('id')||'')},true);
+ creds={memberId:result.memberId,token:result.token};
+ localStorage.setItem(STORE,JSON.stringify(creds));
+ await refresh();message='';toast('已登入帳戶 '+result.memberId);
+}
+// ID＋復原碼的原有登入邏輯保留，並未刪除。
 async function recover(form){
  const fd=new FormData(form);
  const result=await api('/api/auth/recover','POST',{id:String(fd.get('id')||''),recoveryCode:String(fd.get('recoveryCode')||'')},true);
@@ -165,12 +135,13 @@ function action(name,el){if(name==='filter'){category=el.dataset.sport;render()}
  else if(name==='days'){windowDays=Number(el.dataset.days)||7;render()}
  else if(name==='copy-recovery'){const code=$('#recovery-output')?.value||'';if(navigator.clipboard?.writeText)navigator.clipboard.writeText(code).then(()=>toast('復原碼已複製')).catch(()=>toast('請長按並複製復原碼'));else toast('請長按文字選取並複製復原碼')}
  else if(name==='export'){const blob=new Blob([JSON.stringify({...data,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});const a=document.createElement('a');const url=URL.createObjectURL(blob);a.href=url;a.download='留在場外-雲端資料備份.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
- else if(name==='logout'){if(confirm('登出此裝置？請先確認已保存復原碼，否則可能無法找回此帳戶。')){localStorage.removeItem(STORE);creds=null;data=null;slip=[];render()}}
+ else if(name==='logout'){if(confirm('登出此裝置？測試模式可用 ID 重新登入；請仍保存原有復原碼。')){localStorage.removeItem(STORE);creds=null;data=null;slip=[];render()}}
 }
 document.addEventListener('click',e=>{const v=e.target.closest('[data-view]');if(v){view=v.dataset.view;render();scrollTo({top:0,behavior:'smooth'});return}const node=e.target.closest('[data-action]');if(node)action(node.dataset.action,node)});
 document.addEventListener('input',e=>{if(e.target.id==='stake')stake=Number(e.target.value)});
-document.addEventListener('submit',e=>{if(!['register-form','recover-form','limit-form'].includes(e.target.getAttribute('id')))return;e.preventDefault();const form=e.target;
+document.addEventListener('submit',e=>{if(!['register-form','id-login-form','recover-form','limit-form'].includes(e.target.getAttribute('id')))return;e.preventDefault();const form=e.target;
  if(form.getAttribute('id')==='register-form')run(()=>register(form));
+ if(form.getAttribute('id')==='id-login-form')run(()=>loginById(form));
  if(form.getAttribute('id')==='recover-form')run(()=>recover(form));
  if(form.getAttribute('id')==='limit-form')run(async()=>{const f=new FormData(form);await api('/api/settings','POST',{kind:'limit',dailyLimit:Number(f.get('dailyLimit'))});await refresh();toast('每日上限已更新')});
 });
